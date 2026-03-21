@@ -144,7 +144,7 @@ _TeamCity*
 
 # Coverlet is a free, cross platform Code Coverage Tool
 coverage*.json
-coverage*.xml
+coverage*.xmlcri
 coverage*.info
 
 # Visual Studio code coverage results
@@ -361,3 +361,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+
+# db
+
+*.db
