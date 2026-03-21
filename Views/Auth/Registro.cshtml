@@ -1,0 +1,66 @@
+﻿@model CalculadoraCripto.Models.Usuario
+
+@{
+    ViewData["Title"] = "Registro";
+}
+
+<div class="auth-wrapper">
+    <div class="auth-card" style="max-width:480px; animation: fadeUp 0.5s cubic-bezier(0.4,0,0.2,1);">
+
+        <div class="auth-logo">₿ CriptoCal</div>
+        <p class="auth-subtitle">Creá tu cuenta y empezá a trackear tus ganancias</p>
+
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label">Nombre de usuario</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                    <input asp-for="NombreUsuario" class="form-control" placeholder="ej: satoshi21" />
+                </div>
+                <span asp-validation-for="NombreUsuario" class="text-danger small mt-1 d-block"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                    <input asp-for="Email" class="form-control" placeholder="tu@email.com" />
+                </div>
+                <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Contraseña</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="Mínimo 8 caracteres" />
+                </div>
+                <span asp-validation-for="Password" class="text-danger small mt-1 d-block"></span>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Confirmar contraseña</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                    <input name="confirmPassword" type="password" class="form-control" placeholder="Repetí la contraseña" />
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-success w-100 py-2 mb-3">
+                <i class="bi bi-person-plus me-2"></i>Crear cuenta
+            </button>
+
+            <div class="auth-divider"></div>
+
+            <p class="text-center mb-0" style="font-size:0.88rem; color:var(--text-muted)">
+                ¿Ya tenés cuenta?
+                <a href="/Auth/Login" style="color:var(--gold); font-weight:600;">Iniciá sesión</a>
+            </p>
+        </form>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

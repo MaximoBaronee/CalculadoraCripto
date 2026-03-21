@@ -1,0 +1,74 @@
+﻿@model CalculadoraCripto.Models.CalculadoraSimpleModel
+
+@{
+    ViewData["Title"] = "Resultado";
+}
+
+<div class="hero-section" style="padding-top:2.5rem;">
+    <div class="hero-badge">
+        <i class="bi bi-check-circle-fill"></i>
+        Resultado del cálculo
+    </div>
+    <h1 class="hero-title" style="font-size:clamp(1.8rem,4vw,2.8rem);">
+        <span>@Model.Criptomoneda</span>
+    </h1>
+</div>
+
+<div class="calc-card mb-4" style="animation: fadeUp 0.45s cubic-bezier(0.4,0,0.2,1) both;">
+
+    <!-- Stat principal: ganancia/pérdida -->
+    <div class="text-center mb-4 pb-4" style="border-bottom:1px solid var(--border);">
+        <div style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); margin-bottom:0.5rem;">
+            Ganancia / Pérdida
+        </div>
+        <div style="font-family:'Syne',sans-serif; font-size:3rem; font-weight:800; letter-spacing:-0.04em; color:@(Model.Ganancia >= 0 ? "var(--green)" : "var(--red)");">
+            @(Model.Ganancia >= 0 ? "+" : "")$@Model.Ganancia.ToString("N2")
+        </div>
+        <div style="margin-top:0.4rem;">
+            <span class="badge-gain @(Model.Porcentaje >= 0 ? "positive" : "negative")" style="font-size:0.95rem; padding:0.4rem 1rem;">
+                @(Model.Porcentaje >= 0 ? "+" : "")@Model.Porcentaje.ToString("N2")%
+            </span>
+        </div>
+    </div>
+
+    <!-- Detalle -->
+    <div class="result-box">
+        <div class="result-row">
+            <span class="result-label">Criptomoneda</span>
+            <span class="result-value" style="color:var(--gold);">@Model.Criptomoneda</span>
+        </div>
+        <div class="result-row">
+            <span class="result-label">Precio de compra</span>
+            <span class="result-value">$@Model.PrecioCompra.ToString("N2")</span>
+        </div>
+        <div class="result-row">
+            <span class="result-label">Precio de venta</span>
+            <span class="result-value">$@Model.PrecioVenta.ToString("N2")</span>
+        </div>
+    </div>
+
+</div>
+
+<!-- CTA -->
+@if (!User.Identity.IsAuthenticated)
+{
+    <div class="calc-card mb-5 text-center" style="animation: fadeUp 0.5s cubic-bezier(0.4,0,0.2,1) 0.15s both;">
+        <p style="color:var(--text-secondary); margin-bottom:1.2rem; font-size:0.95rem;">
+            ¿Querés guardar y trackear todas tus operaciones?
+        </p>
+        <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center">
+            <a href="/Auth/Registro" class="btn btn-primary">
+                <i class="bi bi-person-plus me-2"></i>Crear cuenta gratis
+            </a>
+            <a href="/Auth/Login" class="btn btn-secondary">
+                Iniciar sesión
+            </a>
+        </div>
+    </div>
+}
+
+<div class="text-center mb-5">
+    <a href="/Home/Index" class="btn btn-secondary">
+        <i class="bi bi-arrow-left me-2"></i>Nueva calculadora
+    </a>
+</div>

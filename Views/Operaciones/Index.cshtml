@@ -1,0 +1,142 @@
+﻿@model List<CalculadoraCripto.Models.Operacion>
+
+@{
+    ViewData["Title"] = "Mis operaciones";
+}
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success alert-dismissible d-flex align-items-center gap-2 mb-4" role="alert">
+        <i class="bi bi-check-circle-fill"></i>
+        @TempData["Mensaje"]
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Portfolio</h2>
+        <p class="mb-0" style="color:var(--text-muted); font-size:0.88rem;">
+            Resumen de todas tus operaciones cripto
+        </p>
+    </div>
+    <a href="/Operaciones/Create" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-2"></i>Nueva operación
+    </a>
+</div>
+
+<!-- STAT CARDS -->
+<div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6 col-lg-3 stat-animate">
+        <div class="card-stat blue">
+            <div class="stat-label">Total invertido</div>
+            <div class="stat-value">$@ViewBag.TotalInvertido.ToString("N2")</div>
+            <div class="stat-icon"><i class="bi bi-wallet2"></i></div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3 stat-animate">
+        <div class="card-stat gold">
+            <div class="stat-label">Valor final</div>
+            <div class="stat-value">$@ViewBag.TotalFinal.ToString("N2")</div>
+            <div class="stat-icon"><i class="bi bi-coin"></i></div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3 stat-animate">
+        <div class="card-stat @(ViewBag.GananciaTotal >= 0 ? "green" : "red")">
+            <div class="stat-label">Ganancia total</div>
+            <div class="stat-value">$@ViewBag.GananciaTotal.ToString("N2")</div>
+            <div class="stat-icon">
+                <i class="bi bi-@(ViewBag.GananciaTotal >= 0 ? "graph-up-arrow" : "graph-down-arrow")"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3 stat-animate">
+        <div class="card-stat @(ViewBag.PorcentajeTotal >= 0 ? "green" : "red")">
+            <div class="stat-label">Rendimiento</div>
+            <div class="stat-value">@ViewBag.PorcentajeTotal.ToString("N2")%</div>
+            <div class="stat-icon">
+                <i class="bi bi-percent"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- OPERATIONS TABLE -->
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <h3 class="mb-0" style="font-size:1rem; color:var(--text-secondary); font-weight:500; text-transform:uppercase; letter-spacing:0.06em;">
+        Historial de operaciones
+    </h3>
+    <span style="font-size:0.82rem; color:var(--text-muted);">@Model.Count() registros</span>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <div class="empty-icon"><i class="bi bi-inbox"></i></div>
+        <p>No hay operaciones registradas todavía.</p>
+        <a href="/Operaciones/Create" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-2"></i>Crear primera operación
+        </a>
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Cripto</th>
+                    <th>Compra</th>
+                    <th>Venta</th>
+                    <th>Cantidad</th>
+                    <th>Ganancia</th>
+                    <th>%</th>
+                    <th>Fecha</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var op in Model)
+                {
+                    <tr>
+                        <td>
+                            <span class="crypto-badge">
+                                <i class="bi bi-currency-bitcoin"></i>@op.Criptomoneda
+                            </span>
+                        </td>
+                        <td style="color:var(--text-secondary);">$@op.PrecioCompra.ToString("N2")</td>
+                        <td style="color:var(--text-secondary);">$@op.PrecioVenta.ToString("N2")</td>
+                        <td style="color:var(--text-secondary);">@op.Cantidad.ToString("N4")</td>
+                        <td>
+                            <span class="badge-gain @(op.Ganancia >= 0 ? "positive" : "negative")">
+                                @(op.Ganancia >= 0 ? "+" : "")$@op.Ganancia.ToString("N2")
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge-gain @(op.Porcentaje >= 0 ? "positive" : "negative")">
+                                @(op.Porcentaje >= 0 ? "+" : "")@op.Porcentaje.ToString("N2")%
+                            </span>
+                        </td>
+                        <td style="color:var(--text-muted); font-size:0.85rem;">
+                            @op.Fecha.ToShortDateString()
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a href="/Operaciones/Edit/@op.Id" class="btn btn-warning btn-sm">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form method="post" action="/Operaciones/Delete/@op.Id" class="d-inline">
+                                    <button type="submit" class="btn btn-danger btn-sm"
+                                            onclick="return confirm('¿Eliminar esta operación?')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

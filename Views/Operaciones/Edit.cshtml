@@ -1,0 +1,96 @@
+﻿@model CalculadoraCripto.Models.Operacion
+
+@{
+    ViewData["Title"] = "Editar operación";
+}
+
+<div class="row justify-content-center" style="animation: fadeUp 0.45s cubic-bezier(0.4,0,0.2,1);">
+    <div class="col-12 col-md-9 col-lg-7">
+
+        <!-- Header -->
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <a href="/Operaciones/Index" class="btn btn-secondary btn-sm">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <div>
+                <h2 class="mb-0" style="font-size:1.5rem;">Editar operación</h2>
+                <p class="mb-0" style="color:var(--text-muted); font-size:0.85rem;">Modificá los datos de tu operación</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header d-flex align-items-center gap-2">
+                <span style="width:8px;height:8px;border-radius:50%;background:var(--gold);display:inline-block;"></span>
+                <span style="font-family:'Syne',sans-serif; font-weight:700; font-size:0.9rem; letter-spacing:0.02em;">
+                    Editando: <span style="color:var(--gold)">@Model.Criptomoneda</span>
+                </span>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="row g-3">
+
+                        <!-- Criptomoneda -->
+                        <div class="col-12">
+                            <label asp-for="Criptomoneda" class="form-label">Criptomoneda</label>
+                            <input asp-for="Criptomoneda" class="form-control" />
+                            <span asp-validation-for="Criptomoneda" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <!-- Precio compra / venta -->
+                        <div class="col-12 col-sm-6">
+                            <label asp-for="PrecioCompra" class="form-label">Precio de compra</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="PrecioCompra" class="form-control" step="0.01" />
+                            </div>
+                            <span asp-validation-for="PrecioCompra" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <div class="col-12 col-sm-6">
+                            <label asp-for="PrecioVenta" class="form-label">Precio de venta</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="PrecioVenta" class="form-control" step="0.01" />
+                            </div>
+                            <span asp-validation-for="PrecioVenta" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <!-- Cantidad / Fecha -->
+                        <div class="col-12 col-sm-6">
+                            <label asp-for="Cantidad" class="form-label">Cantidad</label>
+                            <input asp-for="Cantidad" class="form-control" step="0.0001" />
+                            <span asp-validation-for="Cantidad" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <div class="col-12 col-sm-6">
+                            <label asp-for="Fecha" class="form-label">Fecha</label>
+                            <input asp-for="Fecha" type="date" class="form-control" />
+                            <span asp-validation-for="Fecha" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="col-12">
+                            <hr />
+                            <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end">
+                                <a href="/Operaciones/Index" class="btn btn-secondary">
+                                    Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-lg me-2"></i>Actualizar
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

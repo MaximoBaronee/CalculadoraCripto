@@ -1,0 +1,56 @@
+﻿@{
+    ViewData["Title"] = "Iniciar sesión";
+}
+
+<div class="auth-wrapper">
+    <div class="auth-card" style="animation: fadeUp 0.5s cubic-bezier(0.4,0,0.2,1);">
+
+        <div class="auth-logo">₿ CriptoCal</div>
+        <p class="auth-subtitle">Accedé a tu portfolio de operaciones</p>
+
+        @if (TempData["Mensaje"] != null)
+        {
+            <div class="alert alert-success d-flex align-items-center gap-2 mb-3">
+                <i class="bi bi-check-circle-fill"></i>
+                @TempData["Mensaje"]
+            </div>
+        }
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger d-flex align-items-center gap-2 mb-3">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                @ViewBag.Error
+            </div>
+        }
+
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label">Usuario</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                    <input name="nombreUsuario" class="form-control" placeholder="Tu nombre de usuario" required />
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="form-label">Contraseña</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                    <input name="password" type="password" class="form-control" placeholder="••••••••" required />
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2 mb-3">
+                <i class="bi bi-arrow-right-circle me-2"></i>Ingresar
+            </button>
+
+            <div class="auth-divider"></div>
+
+            <p class="text-center mb-0" style="font-size:0.88rem; color:var(--text-muted)">
+                ¿No tenés cuenta?
+                <a href="/Auth/Registro" style="color:var(--gold); font-weight:600;">Registrate gratis</a>
+            </p>
+        </form>
+
+    </div>
+</div>

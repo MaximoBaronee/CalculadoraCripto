@@ -1,8 +1,77 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model CalculadoraCripto.Models.CalculadoraSimpleModel
+
+@{
+    ViewData["Title"] = "Calculadora";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- HERO -->
+<div class="hero-section">
+    <div class="hero-badge">
+        <i class="bi bi-lightning-charge-fill"></i>
+        Calculadora instantánea
+    </div>
+    <h1 class="hero-title">
+        Calculá tus ganancias<br>en <span>cripto</span> al instante
+    </h1>
+    <p style="color:var(--text-secondary); max-width:480px; margin:0 auto 2.5rem; font-size:1rem;">
+        Ingresá los datos de tu operación y descubrí cuánto ganaste o perdiste, sin necesidad de crear cuenta.
+    </p>
 </div>
+
+<!-- CALCULATOR CARD -->
+<div class="calc-card mb-5" style="animation: fadeUp 0.5s cubic-bezier(0.4,0,0.2,1) 0.1s both;">
+    <form method="post" action="/Home/Calcular">
+        <div class="row g-3 mb-3">
+            <div class="col-12">
+                <label class="form-label">Criptomoneda</label>
+                <input asp-for="Criptomoneda" class="form-control"
+                       placeholder="ej: Bitcoin, Ethereum, Solana..." />
+                <span asp-validation-for="Criptomoneda" class="text-danger small mt-1 d-block"></span>
+            </div>
+
+            <div class="col-12 col-sm-6">
+                <label class="form-label">Precio de compra</label>
+                <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input asp-for="PrecioCompra" class="form-control" step="0.01" placeholder="0.00" />
+                </div>
+                <span asp-validation-for="PrecioCompra" class="text-danger small mt-1 d-block"></span>
+            </div>
+
+            <div class="col-12 col-sm-6">
+                <label class="form-label">Precio de venta</label>
+                <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input asp-for="PrecioVenta" class="form-control" step="0.01" placeholder="0.00" />
+                </div>
+                <span asp-validation-for="PrecioVenta" class="text-danger small mt-1 d-block"></span>
+            </div>
+
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-calculator me-2"></i>Calcular
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- CTA -->
+@if (!User.Identity.IsAuthenticated)
+{
+    <div class="text-center mb-5" style="animation: fadeUp 0.5s cubic-bezier(0.4,0,0.2,1) 0.2s both;">
+        <p style="color:var(--text-muted); margin-bottom:1rem; font-size:0.95rem;">
+            ¿Querés guardar y trackear todas tus operaciones?
+        </p>
+        <a href="/Auth/Registro" class="btn btn-primary me-2">
+            <i class="bi bi-person-plus me-2"></i>Crear cuenta gratis
+        </a>
+        <a href="/Auth/Login" class="btn btn-secondary">
+            Iniciar sesión
+        </a>
+    </div>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
