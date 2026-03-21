@@ -1,25 +1,29 @@
-using System.Diagnostics;
-using CalculadoraCripto.Models;
 using Microsoft.AspNetCore.Mvc;
+using CalculadoraCripto.Models;
 
-namespace CalculadoraCripto.Controllers
+namespace CalculadoraCripto.Controllers;
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    public IActionResult Index()
     {
-        public IActionResult Index()
+        return View(new CalculadoraSimpleModel());
+    }
+
+    [HttpPost]
+    public IActionResult Calcular(CalculadoraSimpleModel modelo)
+    {
+        if (ModelState.IsValid)
         {
-            return View();
+            // Calcular ganancia y porcentaje
+            modelo.Ganancia = (modelo.PrecioVenta - modelo.PrecioCompra);
+            modelo.Porcentaje = modelo.PrecioCompra > 0
+                ? (modelo.PrecioVenta - modelo.PrecioCompra) / modelo.PrecioCompra * 100
+                : 0;
+
+            return View("Resultado", modelo);
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        return View("Index", modelo);
     }
 }
