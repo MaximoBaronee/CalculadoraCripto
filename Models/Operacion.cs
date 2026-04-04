@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CalculadoraCripto.Models;
 
@@ -6,6 +7,9 @@ public class Operacion
 {
     public int Id { get; set; }
     public int IdUsuario { get; set; }
+
+    [ForeignKey("IdUsuario")]
+    public Usuario? Usuario { get; set; }
 
     [Required(ErrorMessage = "La criptomoneda es obligatoria")]
     public string Criptomoneda { get; set; }

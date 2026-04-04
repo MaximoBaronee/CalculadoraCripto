@@ -24,7 +24,12 @@ public class AuthController : Controller
             return View();
         }
 
-        var usuario = Database.ObtenerUsuarioPorNombre(nombreUsuario);
+        using var db = new AppDbContext();
+
+        var usuario = db.Usuarios
+            .FirstOrDefault(u => u.NombreUsuario == nombreUsuario);
+
+
         if (usuario == null || !BCrypt.Net.BCrypt.Verify(password, usuario.Password))
         {
             ViewBag.Error = "Usuario o contraseña incorrectos";
@@ -58,24 +63,43 @@ public class AuthController : Controller
     [HttpPost]
     public IActionResult Registro(Usuario usuario, string confirmPassword)
     {
+        using var db = new AppDbContext();
+
+        Console.WriteLine("---- DEBUG REGISTRO ----");
+        Console.WriteLine($"Usuario: {usuario.NombreUsuario}");
+        Console.WriteLine($"Email: {usuario.Email}");
+        Console.WriteLine($"Password: {usuario.Password}");
+
         if (usuario.Password != confirmPassword)
         {
             ModelState.AddModelError("Password", "Las contraseñas no coinciden");
         }
 
-        if (Database.ObtenerUsuarioPorNombre(usuario.NombreUsuario) != null)
+        if (db.Usuarios.Any(u => u.NombreUsuario == usuario.NombreUsuario))
         {
             ModelState.AddModelError("NombreUsuario", "El nombre de usuario ya existe");
         }
 
         if (!ModelState.IsValid)
         {
+            Console.WriteLine("---- ERRORES ----");
+
+            foreach (var error in ModelState)
+            {
+                foreach (var subError in error.Value.Errors)
+                {
+                    Console.WriteLine($"Error en {error.Key}: {subError.ErrorMessage}");
+                }
+            }
+
             return View(usuario);
         }
 
         // Hashear contraseña
-        string passwordHash = BCrypt.Net.BCrypt.HashPassword(usuario.Password);
-        Database.InsertarUsuario(usuario, passwordHash);
+        usuario.Password = BCrypt.Net.BCrypt.HashPassword(usuario.Password);
+
+        db.Usuarios.Add(usuario);
+        db.SaveChanges();
 
         TempData["Mensaje"] = "Registro exitoso. Inicie sesión.";
         return RedirectToAction("Login");

@@ -366,3 +366,11 @@ FodyWeavers.xsd
 # db
 
 *.db
+
+*.db-shm
+*.db-wal
+
+
+.vscode/
+
+appsettings.Development.json

@@ -16,4 +16,6 @@ public class Usuario
     [Required(ErrorMessage = "La contraseña es obligatoria")]
     [DataType(DataType.Password)]
     public string Password { get; set; }
+
+    
 }

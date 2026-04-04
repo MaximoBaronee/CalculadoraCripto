@@ -16,8 +16,7 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Inicializar base de datos (crear tablas si no existen)
-Database.Inicializar();
+
 
 if (!app.Environment.IsDevelopment())
 {

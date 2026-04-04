@@ -10,7 +10,8 @@
         <div class="auth-logo">₿ CriptoCal</div>
         <p class="auth-subtitle">Creá tu cuenta y empezá a trackear tus ganancias</p>
 
-        <form method="post">
+        <form asp-action="Registro" method="post">
+            @Html.AntiForgeryToken()
             <div class="mb-3">
                 <label class="form-label">Nombre de usuario</label>
                 <div class="input-group">
