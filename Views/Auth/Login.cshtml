@@ -24,7 +24,8 @@
             </div>
         }
 
-        <form method="post">
+        <form asp-action="Login" method="post">
+            @Html.AntiForgeryToken()
             <div class="mb-3">
                 <label class="form-label">Usuario</label>
                 <div class="input-group">

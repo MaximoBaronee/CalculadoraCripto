@@ -17,14 +17,31 @@ public class OperacionesController : Controller
     public IActionResult Index()
     {
         var idUsuario = ObtenerUsuarioId();
-        var operaciones = Database.ObtenerOperacionesPorUsuario(idUsuario);
-        var totales = Database.ObtenerTotales(idUsuario);
 
-        ViewBag.TotalInvertido = totales.totalInvertido;
-        ViewBag.TotalFinal = totales.totalFinal;
-        ViewBag.GananciaTotal = totales.gananciaTotal;
-        ViewBag.PorcentajeTotal = totales.totalInvertido > 0
-            ? (totales.gananciaTotal / totales.totalInvertido) * 100
+        using var db = new AppDbContext();
+
+        var operaciones = db.Operaciones
+            .Where(o => o.IdUsuario == idUsuario)
+            .OrderByDescending(o => o.Fecha)
+            .ToList();
+
+        var totalInvertido = db.Operaciones
+            .Where(o => o.IdUsuario == idUsuario)
+            .Sum(o => (decimal?)o.Invertido) ?? 0;
+
+        var totalFinal = db.Operaciones
+            .Where(o => o.IdUsuario == idUsuario)
+            .Sum(o => (decimal?)o.ValorFinal) ?? 0;
+
+        var gananciaTotal = db.Operaciones
+            .Where(o => o.IdUsuario == idUsuario)
+            .Sum(o => (decimal?)o.Ganancia) ?? 0;
+
+        ViewBag.TotalInvertido = totalInvertido;
+        ViewBag.TotalFinal = totalFinal;
+        ViewBag.GananciaTotal = gananciaTotal;
+        ViewBag.PorcentajeTotal = totalInvertido > 0
+            ? (gananciaTotal / totalInvertido) * 100
             : 0;
 
         return View(operaciones);
@@ -38,7 +55,8 @@ public class OperacionesController : Controller
     [HttpPost]
     public IActionResult Create(Operacion operacion)
     {
-        // Calcular valores automáticos
+        Console.WriteLine("🔥 CREATE POST EJECUTADO");
+
         operacion.Invertido = operacion.PrecioCompra * operacion.Cantidad;
         operacion.ValorFinal = operacion.PrecioVenta * operacion.Cantidad;
         operacion.Ganancia = (operacion.PrecioVenta - operacion.PrecioCompra) * operacion.Cantidad;
@@ -46,16 +64,23 @@ public class OperacionesController : Controller
             ? (operacion.PrecioVenta - operacion.PrecioCompra) / operacion.PrecioCompra * 100
             : 0;
 
-        // Asignar usuario logueado
         operacion.IdUsuario = ObtenerUsuarioId();
+        Console.WriteLine("IdUsuario obtenido: " + operacion.IdUsuario);
 
-        // Validar modelo
-        if (!ModelState.IsValid)
+        Console.WriteLine("ModelState válido: " + ModelState.IsValid);
+        foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
         {
-            return View(operacion);
+            Console.WriteLine("ERROR: " + error.ErrorMessage);
         }
 
-        Database.InsertarOperacion(operacion);
+        if (!ModelState.IsValid)
+            return View(operacion);
+
+        using var db = new AppDbContext();
+        db.Operaciones.Add(operacion);
+        db.SaveChanges();
+        Console.WriteLine("✅ GUARDADO EN DB");
+
         TempData["Mensaje"] = "Operación registrada correctamente";
         return RedirectToAction("Index");
     }
@@ -63,7 +88,12 @@ public class OperacionesController : Controller
     public IActionResult Edit(int id)
     {
         var idUsuario = ObtenerUsuarioId();
-        var operacion = Database.ObtenerOperacionPorId(id, idUsuario);
+
+        using var db = new AppDbContext();
+
+        var operacion = db.Operaciones
+            .FirstOrDefault(o => o.Id == id && o.IdUsuario == idUsuario);
+
         if (operacion == null)
             return NotFound();
 
@@ -73,7 +103,6 @@ public class OperacionesController : Controller
     [HttpPost]
     public IActionResult Edit(Operacion operacion)
     {
-        // Recalcular
         operacion.Invertido = operacion.PrecioCompra * operacion.Cantidad;
         operacion.ValorFinal = operacion.PrecioVenta * operacion.Cantidad;
         operacion.Ganancia = (operacion.PrecioVenta - operacion.PrecioCompra) * operacion.Cantidad;
@@ -83,12 +112,30 @@ public class OperacionesController : Controller
 
         operacion.IdUsuario = ObtenerUsuarioId();
 
+
+        foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+        {
+            Console.WriteLine("ERROR MODELSTATE: " + error.ErrorMessage);
+        }
+
+
+
         if (!ModelState.IsValid)
         {
             return View(operacion);
         }
 
-        Database.ActualizarOperacion(operacion);
+        using var db = new AppDbContext();
+
+        var existente = db.Operaciones
+            .FirstOrDefault(o => o.Id == operacion.Id && o.IdUsuario == operacion.IdUsuario);
+
+        if (existente == null)
+            return NotFound();
+
+        db.Entry(existente).CurrentValues.SetValues(operacion);
+        db.SaveChanges();
+
         TempData["Mensaje"] = "Operación actualizada";
         return RedirectToAction("Index");
     }
@@ -97,7 +144,18 @@ public class OperacionesController : Controller
     public IActionResult Delete(int id)
     {
         var idUsuario = ObtenerUsuarioId();
-        Database.EliminarOperacion(id, idUsuario);
+
+        using var db = new AppDbContext();
+
+        var operacion = db.Operaciones
+            .FirstOrDefault(o => o.Id == id && o.IdUsuario == idUsuario);
+
+        if (operacion != null)
+        {
+            db.Operaciones.Remove(operacion);
+            db.SaveChanges();
+        }
+
         TempData["Mensaje"] = "Operación eliminada";
         return RedirectToAction("Index");
     }
