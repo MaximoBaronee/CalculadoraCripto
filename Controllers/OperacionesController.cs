@@ -9,6 +9,13 @@ namespace CalculadoraCripto.Controllers;
 [Authorize]
 public class OperacionesController : Controller
 {
+    private readonly AppDbContext _context;
+
+    public OperacionesController(AppDbContext context)
+    {
+        _context = context;
+    }
+
     private int ObtenerUsuarioId()
     {
         return int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
@@ -18,22 +25,20 @@ public class OperacionesController : Controller
     {
         var idUsuario = ObtenerUsuarioId();
 
-        using var db = new AppDbContext();
-
-        var operaciones = db.Operaciones
+        var operaciones = _context.Operaciones
             .Where(o => o.IdUsuario == idUsuario)
             .OrderByDescending(o => o.Fecha)
             .ToList();
 
-        var totalInvertido = db.Operaciones
+        var totalInvertido = _context.Operaciones
             .Where(o => o.IdUsuario == idUsuario)
             .Sum(o => (decimal?)o.Invertido) ?? 0;
 
-        var totalFinal = db.Operaciones
+        var totalFinal = _context.Operaciones
             .Where(o => o.IdUsuario == idUsuario)
             .Sum(o => (decimal?)o.ValorFinal) ?? 0;
 
-        var gananciaTotal = db.Operaciones
+        var gananciaTotal = _context.Operaciones
             .Where(o => o.IdUsuario == idUsuario)
             .Sum(o => (decimal?)o.Ganancia) ?? 0;
 
@@ -65,21 +70,12 @@ public class OperacionesController : Controller
             : 0;
 
         operacion.IdUsuario = ObtenerUsuarioId();
-        Console.WriteLine("IdUsuario obtenido: " + operacion.IdUsuario);
-
-        Console.WriteLine("ModelState válido: " + ModelState.IsValid);
-        foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-        {
-            Console.WriteLine("ERROR: " + error.ErrorMessage);
-        }
 
         if (!ModelState.IsValid)
             return View(operacion);
 
-        using var db = new AppDbContext();
-        db.Operaciones.Add(operacion);
-        db.SaveChanges();
-        Console.WriteLine("✅ GUARDADO EN DB");
+        _context.Operaciones.Add(operacion);
+        _context.SaveChanges();
 
         TempData["Mensaje"] = "Operación registrada correctamente";
         return RedirectToAction("Index");
@@ -89,9 +85,7 @@ public class OperacionesController : Controller
     {
         var idUsuario = ObtenerUsuarioId();
 
-        using var db = new AppDbContext();
-
-        var operacion = db.Operaciones
+        var operacion = _context.Operaciones
             .FirstOrDefault(o => o.Id == id && o.IdUsuario == idUsuario);
 
         if (operacion == null)
@@ -112,29 +106,17 @@ public class OperacionesController : Controller
 
         operacion.IdUsuario = ObtenerUsuarioId();
 
-
-        foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-        {
-            Console.WriteLine("ERROR MODELSTATE: " + error.ErrorMessage);
-        }
-
-
-
         if (!ModelState.IsValid)
-        {
             return View(operacion);
-        }
 
-        using var db = new AppDbContext();
-
-        var existente = db.Operaciones
+        var existente = _context.Operaciones
             .FirstOrDefault(o => o.Id == operacion.Id && o.IdUsuario == operacion.IdUsuario);
 
         if (existente == null)
             return NotFound();
 
-        db.Entry(existente).CurrentValues.SetValues(operacion);
-        db.SaveChanges();
+        _context.Entry(existente).CurrentValues.SetValues(operacion);
+        _context.SaveChanges();
 
         TempData["Mensaje"] = "Operación actualizada";
         return RedirectToAction("Index");
@@ -145,15 +127,13 @@ public class OperacionesController : Controller
     {
         var idUsuario = ObtenerUsuarioId();
 
-        using var db = new AppDbContext();
-
-        var operacion = db.Operaciones
+        var operacion = _context.Operaciones
             .FirstOrDefault(o => o.Id == id && o.IdUsuario == idUsuario);
 
         if (operacion != null)
         {
-            db.Operaciones.Remove(operacion);
-            db.SaveChanges();
+            _context.Operaciones.Remove(operacion);
+            _context.SaveChanges();
         }
 
         TempData["Mensaje"] = "Operación eliminada";
