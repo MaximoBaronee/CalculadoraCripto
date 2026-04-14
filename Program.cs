@@ -42,15 +42,7 @@ app.MapControllerRoute(
 
 
 
-app.MapGet("/reset-db", async (AppDbContext db) =>
-{
-    await db.Database.ExecuteSqlRawAsync(@"
-        DROP TABLE IF EXISTS ""__EFMigrationsHistory"";
-        DROP TABLE IF EXISTS ""Operaciones"";
-        DROP TABLE IF EXISTS ""Usuarios"";
-    ");
-    return "DB reseteada OK";
-});
+
 
 
 
