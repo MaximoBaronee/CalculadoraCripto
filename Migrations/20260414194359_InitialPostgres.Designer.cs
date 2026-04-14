@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CalculadoraCripto.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260414192006_InitialPostgres")]
+    [Migration("20260414194359_InitialPostgres")]
     partial class InitialPostgres
     {
         /// <inheritdoc />
