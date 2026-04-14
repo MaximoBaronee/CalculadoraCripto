@@ -10,6 +10,13 @@ namespace CalculadoraCripto.Controllers;
 
 public class AuthController : Controller
 {
+    private readonly AppDbContext _context;
+
+    public AuthController(AppDbContext context)
+    {
+        _context = context;
+    }
+
     public IActionResult Login()
     {
         return View();
@@ -24,11 +31,8 @@ public class AuthController : Controller
             return View();
         }
 
-        using var db = new AppDbContext();
-
-        var usuario = db.Usuarios
+        var usuario = _context.Usuarios
             .FirstOrDefault(u => u.NombreUsuario == nombreUsuario);
-
 
         if (usuario == null || !BCrypt.Net.BCrypt.Verify(password, usuario.Password))
         {
@@ -36,7 +40,6 @@ public class AuthController : Controller
             return View();
         }
 
-        // Crear claims
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, usuario.NombreUsuario),
@@ -63,8 +66,6 @@ public class AuthController : Controller
     [HttpPost]
     public IActionResult Registro(Usuario usuario, string confirmPassword)
     {
-        using var db = new AppDbContext();
-
         Console.WriteLine("---- DEBUG REGISTRO ----");
         Console.WriteLine($"Usuario: {usuario.NombreUsuario}");
         Console.WriteLine($"Email: {usuario.Email}");
@@ -75,7 +76,7 @@ public class AuthController : Controller
             ModelState.AddModelError("Password", "Las contraseñas no coinciden");
         }
 
-        if (db.Usuarios.Any(u => u.NombreUsuario == usuario.NombreUsuario))
+        if (_context.Usuarios.Any(u => u.NombreUsuario == usuario.NombreUsuario))
         {
             ModelState.AddModelError("NombreUsuario", "El nombre de usuario ya existe");
         }
@@ -95,11 +96,10 @@ public class AuthController : Controller
             return View(usuario);
         }
 
-        // Hashear contraseña
         usuario.Password = BCrypt.Net.BCrypt.HashPassword(usuario.Password);
 
-        db.Usuarios.Add(usuario);
-        db.SaveChanges();
+        _context.Usuarios.Add(usuario);
+        _context.SaveChanges();
 
         TempData["Mensaje"] = "Registro exitoso. Inicie sesión.";
         return RedirectToAction("Login");
