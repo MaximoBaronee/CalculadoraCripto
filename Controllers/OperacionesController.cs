@@ -68,7 +68,7 @@ public class OperacionesController : Controller
         operacion.Porcentaje = operacion.PrecioCompra > 0
             ? (operacion.PrecioVenta - operacion.PrecioCompra) / operacion.PrecioCompra * 100
             : 0;
-
+        operacion.Fecha = DateTime.UtcNow;
         operacion.IdUsuario = ObtenerUsuarioId();
 
         if (!ModelState.IsValid)
@@ -103,7 +103,7 @@ public class OperacionesController : Controller
         operacion.Porcentaje = operacion.PrecioCompra > 0
             ? (operacion.PrecioVenta - operacion.PrecioCompra) / operacion.PrecioCompra * 100
             : 0;
-
+        operacion.Fecha = DateTime.UtcNow;
         operacion.IdUsuario = ObtenerUsuarioId();
 
         if (!ModelState.IsValid)
