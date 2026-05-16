@@ -19,7 +19,8 @@ var connectionString =
     ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
 if (!string.IsNullOrEmpty(connectionString) &&
-    connectionString.StartsWith("postgres://"))
+    (connectionString.StartsWith("postgres://") ||
+    connectionString.StartsWith("postgresql://")))
 {
     var databaseUri = new Uri(connectionString);
     var userInfo = databaseUri.UserInfo.Split(':');
