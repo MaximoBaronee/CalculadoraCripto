@@ -27,7 +27,7 @@ if (!string.IsNullOrEmpty(connectionString) &&
 
     connectionString =
         $"Host={databaseUri.Host};" +
-        $"Port={databaseUri.Port};" +
+        $"Port={(databaseUri.Port > 0 ? databaseUri.Port : 5432)};" +
         $"Database={databaseUri.AbsolutePath.Trim('/')};" +
         $"Username={userInfo[0]};" +
         $"Password={userInfo[1]};" +
