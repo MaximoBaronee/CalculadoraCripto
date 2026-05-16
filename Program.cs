@@ -33,6 +33,8 @@ if (!string.IsNullOrEmpty(connectionString) &&
         $"SSL Mode=Require;Trust Server Certificate=true";
 }
 
+Console.WriteLine($"CONNECTION STRING: {connectionString}");
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
