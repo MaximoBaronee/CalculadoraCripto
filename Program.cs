@@ -14,8 +14,24 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+if (connectionString != null && connectionString.StartsWith("postgres://"))
+{
+    var databaseUri = new Uri(connectionString);
+    var userInfo = databaseUri.UserInfo.Split(':');
+
+    connectionString =
+        $"Host={databaseUri.Host};" +
+        $"Port={databaseUri.Port};" +
+        $"Database={databaseUri.AbsolutePath.Trim('/')};" +
+        $"Username={userInfo[0]};" +
+        $"Password={userInfo[1]};" +
+        $"SSL Mode=Require;Trust Server Certificate=true";
+}
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddControllersWithViews();
 
