@@ -374,3 +374,5 @@ FodyWeavers.xsd
 .vscode/
 
 appsettings.Development.json
+
+appsettings.json
